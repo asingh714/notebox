@@ -51,4 +51,30 @@ router.get("/:id", (req, res) => {
     });
 });
 
+router.post("/", (req, res) => {
+  const note = req.body;
+
+  if (!note.title || !note.textBody) {
+    res.status(400).json({ error: "Please provide a title and text body for the note." })
+  } else {
+    db("notes")
+      .insert(note)
+      .then(notes => {
+        const id = notes[0];
+        db("notes")
+        .where({ id })
+        .first()
+        .then(note => {
+          res.status(201).json(note)
+        })
+      })
+      .catch(error => {
+        res.status(500).json({
+          error:
+            "There was an error while saving the project to the database."
+        });
+      })
+  }
+})
+
 module.exports = router;
