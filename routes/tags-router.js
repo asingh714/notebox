@@ -34,4 +34,30 @@ router.get("/:id", (req, res) => {
     });
 });
 
+router.post("/", (req, res) => {
+  const tag = req.body;
+  if (!tag.tags || !tag.note_id) {
+    res
+      .status(400)
+      .json({ error: "Please provide a tag and note_id for the tag." });
+  } else {
+    db("tags")
+      .insert(tag)
+      .then(tags => {
+        const id = tags[0];
+        db("tags")
+          .where({ id })
+          .first()
+          .then(note => {
+            res.status(201).json(note);
+          });
+      })
+      .catch(error => {
+        res.status(500).json({
+          error: "There was an error while saving the tag to the database."
+        });
+      });
+  }
+});
+
 module.exports = router;
