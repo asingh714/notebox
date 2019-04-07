@@ -55,26 +55,63 @@ router.post("/", (req, res) => {
   const note = req.body;
 
   if (!note.title || !note.textBody) {
-    res.status(400).json({ error: "Please provide a title and text body for the note." })
+    res
+      .status(400)
+      .json({ error: "Please provide a title and text body for the note." });
   } else {
     db("notes")
       .insert(note)
       .then(notes => {
         const id = notes[0];
         db("notes")
-        .where({ id })
-        .first()
-        .then(note => {
-          res.status(201).json(note)
-        })
+          .where({ id })
+          .first()
+          .then(note => {
+            res.status(201).json(note);
+          });
       })
       .catch(error => {
         res.status(500).json({
-          error:
-            "There was an error while saving the project to the database."
+          error: "There was an error while saving the project to the database."
         });
-      })
+      });
   }
-})
+});
+
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  if (!changes.title || !changes.textBody) {
+    res
+      .status(400)
+      .json({ error: "Please provide a title and text body for the note." });
+  } else {
+    db("notes")
+      .where({ id })
+      .update(changes)
+      .then(count => {
+        if (count > 0) {
+          db("notes")
+            .where({ id })
+            .first()
+            .then(note => {
+              res.status(200).json(note);
+            });
+        } else {
+          res
+            .status(404)
+            .json({
+              message: "The note with the specified ID does not exist."
+            });
+        }
+      })
+      .catch(error => {
+        res.status(500).json({
+          error: "The note information could not be modified."
+        });
+      });
+  }
+});
 
 module.exports = router;
