@@ -4,7 +4,7 @@ const router = express.Router();
 const db = require("../data/dbConfig");
 
 router.get("/", (req, res) => {
-  db("meal")
+  db("meals")
   .then(meals => {
     res.status(200).json(meals)
   })
