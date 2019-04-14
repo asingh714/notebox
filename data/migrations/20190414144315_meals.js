@@ -17,6 +17,15 @@ exports.up = function(knex, Promise) {
     table.string("wait_time", 255);
 
     table.date("date_visited");
+
+    table
+    .integer("user_id")
+    .unsigned()
+    .notNullable()
+    .references("id")
+    .inTable("users")
+    .onDelete("CASCADE")
+    .onUpdate("CASCADE");
   });
 };
 

@@ -7,15 +7,6 @@ exports.up = function(knex) {
       .notNullable()
       .unique();
     table.string("password", 128).notNullable();
-
-    table
-      .integer("user_id")
-      .unsigned()
-      .notNullable()
-      .references("id")
-      .inTable("meals")
-      .onDelete("CASCADE")
-      .onUpdate("CASCADE");
   });
 };
 
